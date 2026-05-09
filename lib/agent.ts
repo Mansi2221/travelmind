@@ -55,7 +55,7 @@ function buildSearches(userQuery: string): ToolSearch[] {
     { name: "search_flights", query: `${origin} to ${destination} flight prices ${foundMonth} 2025 best deals` },
     { name: "search_hotels", query: `best hotels ${destination} ${foundMonth} affordable ratings reviews` },
     { name: "check_weather", query: `${destination} weather ${foundMonth} temperature what to pack` },
-    { name: "check_visa_requirements", query: `visa requirements for American citizens visiting ${destination}` },
+    { name: "check_visa_requirements", query: `visa requirements for Indian citizens visiting ${destination}` },
     { name: "search_activities", query: `best things to do ${destination} hidden gems culture food 2025` },
   ];
 }

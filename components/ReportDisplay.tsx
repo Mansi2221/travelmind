@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 interface TravelReport {
   destination: string;
   travel_month: string;
+  duration_days?: number;
   total_budget_estimate: string;
   flight_summary: string;
   flight_price_range: string;
@@ -130,7 +131,7 @@ export default function ReportDisplay({ report }: ReportDisplayProps) {
             </h2>
 
             <p className="font-mono text-xs text-txt-tertiary mt-3 tracking-wider uppercase">
-              {report.travel_month} &middot; 7 Nights
+              {report.travel_month} &middot; {report.duration_days || 7} Nights
             </p>
 
             <p className="mt-4 text-sm text-txt-secondary leading-relaxed max-w-md">
