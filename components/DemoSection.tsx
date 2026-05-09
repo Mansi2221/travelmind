@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import QueryInput from "@/components/QueryInput";
 import AgentStream, { StreamEvent } from "@/components/AgentStream";
 import ReportDisplay from "@/components/ReportDisplay";
+import SampleReportPreview from "@/components/SampleReportPreview";
 import { useInView } from "@/hooks/useIntersectionObserver";
 
 interface TravelReport {
@@ -132,6 +133,9 @@ export default function DemoSection() {
         <div className="bg-bg-elevated border border-border-default rounded-xl p-6 md:p-8
           shadow-[inset_0_1px_0_rgba(148,163,184,0.06)]">
           <QueryInput onSubmit={handleSubmit} isLoading={isRunning} />
+
+          {/* Sample report preview — always visible below input */}
+          {!hasActivity && <SampleReportPreview />}
 
           {hasActivity && (
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">

@@ -2,13 +2,19 @@
 
 import { useState, useEffect } from "react";
 
-const PRODUCT_LINKS = ["Live Demo", "Documentation", "API Reference", "Changelog"];
+const PRODUCT_LINKS = [
+  { label: "Live Demo", href: "#demo", external: false },
+  { label: "Architecture", href: "#how-it-works", external: false },
+  { label: "Capabilities", href: "#features", external: false },
+  { label: "Source Code", href: "https://github.com/Mansi2221/travelmind", external: true },
+];
+
 const STACK_LINKS = ["Next.js", "LangGraph", "Groq", "Tavily", "Vercel"];
+
 const CONNECT_LINKS = [
   { label: "GitHub", href: "https://github.com/Mansi2221" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/mansi2221/" },
-  { label: "Twitter", href: "#" },
-  { label: "Email", href: "mailto:mansi@example.com" },
+  { label: "Email", href: "mailto:patil294@purdue.edu" },
 ];
 
 function CompassSvg() {
@@ -35,6 +41,14 @@ export default function Footer() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const el = document.getElementById(href.slice(1));
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <footer className="border-t border-border-faint bg-bg-base">
       <div className="max-w-[1400px] mx-auto px-6 py-12">
@@ -49,7 +63,7 @@ export default function Footer() {
             </div>
             <p className="font-mono text-[11px] text-txt-muted leading-relaxed">
               AI Travel Intelligence Agent. Autonomous multi-step research
-              powered by LangGraph and real-time web search.
+              powered by LangGraph + Groq and real-time web search.
             </p>
           </div>
 
@@ -58,13 +72,15 @@ export default function Footer() {
             <p className="font-mono text-[10px] text-txt-muted tracking-[0.18em] uppercase mb-4">Product</p>
             <ul className="space-y-2">
               {PRODUCT_LINKS.map((link) => (
-                <li key={link}>
-                  <button
-                    onClick={() => link === "Live Demo" ? document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" }) : undefined}
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={(e) => handleSmoothScroll(e, link.href)}
+                    {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     className="font-mono text-[12px] text-txt-tertiary hover:text-txt-primary transition-colors"
                   >
-                    {link}
-                  </button>
+                    {link.label}
+                  </a>
                 </li>
               ))}
             </ul>

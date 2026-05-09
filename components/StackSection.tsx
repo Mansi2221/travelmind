@@ -5,7 +5,7 @@ import { useInView } from "@/hooks/useIntersectionObserver";
 const STACK = [
   { name: "Next.js 14", role: "App Router, server components, streaming" },
   { name: "LangGraph", role: "Stateful agent orchestration" },
-  { name: "Groq", role: "Ultra-fast LLM inference" },
+  { name: "Groq · Llama 4 Scout", role: "Ultra-fast LLM inference (~800 tok/s)" },
   { name: "Tavily API", role: "Real-time web intelligence" },
   { name: "Vercel", role: "Edge deployment + SSE streaming" },
 ];
