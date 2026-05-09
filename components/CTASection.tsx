@@ -28,8 +28,8 @@ export default function CTASection() {
         </h2>
 
         <p className="mt-6 text-txt-secondary text-base leading-relaxed max-w-[600px] mx-auto">
-          I built this as a demonstration of what&apos;s possible with agentic AI for travel.
-          Open to collaborations, internships, and shipping the next version with your team.
+          I built this in 4 days as a demonstration of what&apos;s possible with agentic AI for travel.
+          Open to internships, collaborations, and shipping the next version with your team — starting with Mondee.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10">
@@ -54,7 +54,7 @@ export default function CTASection() {
             Fork on GitHub {"\u2197"}
           </a>
           <a
-            href="mailto:mansi@example.com"
+            href="mailto:patil294@purdue.edu"
             className="px-8 py-3.5 border border-border-default text-txt-secondary font-body font-semibold
               text-[13px] uppercase tracking-[0.15em] hover:border-border-accent hover:text-txt-primary
               transition-all duration-200"
@@ -64,7 +64,7 @@ export default function CTASection() {
         </div>
 
         <p className="mt-8 font-mono text-[10px] text-txt-muted tracking-wider">
-          Built by Mansi &middot; Available May 2026
+          Built by Mansi Patil &middot; Purdue University &middot; Available May 2026
         </p>
       </div>
     </section>

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function useCountUp(target: number, duration = 1200, start = false) {
   const [count, setCount] = useState(0);
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    if (!start) return;
+    if (!start || hasRun.current) return;
+    hasRun.current = true;
 
     let raf: number;
     const startTime = performance.now();

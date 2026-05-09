@@ -26,15 +26,53 @@ function CompassSvg() {
   );
 }
 
+type HealthStatus = "operational" | "degraded" | "offline" | "loading";
+
+function StatusPill({ status }: { status: HealthStatus }) {
+  const config = {
+    operational: { color: "bg-accent-success", label: "OPERATIONAL" },
+    degraded: { color: "bg-amber-400", label: "DEGRADED" },
+    offline: { color: "bg-red-500", label: "OFFLINE" },
+    loading: { color: "bg-txt-muted/40", label: "CHECKING" },
+  }[status];
+
+  return (
+    <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 border border-border-faint">
+      <span className={`w-1.5 h-1.5 rounded-full ${config.color} ${status === "operational" ? "animate-pulse" : ""}`} />
+      <span className="font-mono text-[9px] text-txt-muted tracking-[0.12em]">
+        {config.label}
+      </span>
+    </div>
+  );
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [healthStatus, setHealthStatus] = useState<HealthStatus>("loading");
   const active = useActiveSection(SECTION_IDS);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const res = await fetch("/api/health");
+        if (!res.ok) throw new Error("not ok");
+        const data = await res.json();
+        setHealthStatus(data.status === "operational" ? "operational" : "degraded");
+      } catch {
+        setHealthStatus("offline");
+      }
+    };
+
+    checkHealth();
+    const interval = setInterval(checkHealth, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleNavClick = (href: string) => {
@@ -80,6 +118,7 @@ export default function Navbar() {
 
         {/* Right */}
         <div className="flex items-center gap-3">
+          <StatusPill status={healthStatus} />
           <a
             href="https://github.com/Mansi2221/travelmind"
             target="_blank"
