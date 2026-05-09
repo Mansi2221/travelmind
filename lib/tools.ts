@@ -11,13 +11,13 @@ function getTavilyClient() {
 async function tavilySearch(query: string): Promise<string> {
   try {
     const client = getTavilyClient();
-    const response = await client.search(query, { maxResults: 5 });
+    const response = await client.search(query, { maxResults: 3 });
     return response.results
       .map(
         (r: { title: string; content: string; url: string }) =>
-          `${r.title}: ${r.content} (${r.url})`
+          `${r.title}: ${r.content.slice(0, 300)}`
       )
-      .join("\n\n");
+      .join("\n");
   } catch (error) {
     const message = error instanceof Error ? error.message : "Search failed";
     return `Search error: ${message}. Please continue with available information.`;

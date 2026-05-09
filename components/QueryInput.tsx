@@ -8,9 +8,9 @@ interface QueryInputProps {
 }
 
 const PRESETS = [
-  "New York to Tokyo, October, 7 days, $2000 budget",
-  "London to Bali, December, 10 days, $1500 budget",
-  "San Francisco to Barcelona, June, 5 days, $3000 budget",
+  { label: "Tokyo in autumn \u2014 food, temples, $2k", query: "New York to Tokyo, October, 7 days, $2000 budget, interested in food and temples" },
+  { label: "Bali escape from London \u2014 December reset", query: "London to Bali, December, 10 days, $1500 budget, relaxation and beaches" },
+  { label: "Barcelona long weekend \u2014 architecture & tapas", query: "San Francisco to Barcelona, June, 5 days, $3000 budget, architecture and food" },
 ];
 
 export default function QueryInput({ onSubmit, isLoading }: QueryInputProps) {
@@ -23,57 +23,90 @@ export default function QueryInput({ onSubmit, isLoading }: QueryInputProps) {
     }
   };
 
-  const handlePreset = (preset: string) => {
+  const handlePreset = (preset: typeof PRESETS[0]) => {
     if (!isLoading) {
-      setQuery(preset);
-      onSubmit(preset);
+      setQuery(preset.query);
+      onSubmit(preset.query);
     }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      <form onSubmit={handleSubmit} className="relative">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Where do you want to go? e.g. 'NYC to Tokyo, October, 7 days, $2000'"
-          disabled={isLoading}
-          className="w-full px-5 py-4 pr-32 bg-dark-700 border border-gray-600/50 rounded-xl text-gray-100
-            font-mono text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500/50
-            focus:ring-1 focus:ring-blue-500/20 transition-all disabled:opacity-50"
-        />
+    <div className="w-full max-w-[720px] mx-auto">
+      {/* Label */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-accent-primary font-mono text-sm">[</span>
+        <span className="font-mono text-[11px] text-txt-tertiary tracking-[0.18em] uppercase">
+          Initiate Scan
+        </span>
+      </div>
+
+      {/* Input + Button */}
+      <form onSubmit={handleSubmit} className="flex gap-2">
+        <div className="relative flex-1 group">
+          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-accent-primary text-sm">
+            {"\u25B8"}
+          </span>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Type your travel goal — origin, destination, dates, budget, vibe..."
+            disabled={isLoading}
+            aria-label="Travel query input"
+            className="w-full h-16 pl-10 pr-12 bg-bg-elevated border border-border-default
+              text-txt-primary font-body text-base placeholder:text-txt-muted placeholder:italic
+              focus:outline-none focus:border-accent-primary focus:shadow-[0_0_20px_var(--accent-glow)]
+              transition-all duration-200 disabled:opacity-50"
+          />
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[11px] text-txt-muted">
+            {"\u21B5"}
+          </span>
+        </div>
         <button
           type="submit"
           disabled={isLoading || !query.trim()}
-          className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 bg-blue-600 hover:bg-blue-500
-            text-white font-heading font-semibold text-sm rounded-lg transition-all
-            disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-wider"
+          className="h-16 px-8 bg-accent-primary text-bg-base font-body font-semibold text-[13px]
+            uppercase tracking-[0.18em] transition-all duration-200
+            hover:brightness-110 hover:-translate-y-[1px] hover:shadow-lg
+            active:scale-[0.98]
+            disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none
+            whitespace-nowrap"
         >
           {isLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Scanning
+            <span className="flex items-center gap-1">
+              ANALYZING
+              <span className="animate-pulse">...</span>
             </span>
           ) : (
-            "Analyze"
+            "ANALYZE"
           )}
         </button>
       </form>
 
-      <div className="flex flex-wrap gap-2 mt-3 justify-center">
-        {PRESETS.map((preset) => (
-          <button
-            key={preset}
-            onClick={() => handlePreset(preset)}
-            disabled={isLoading}
-            className="px-3 py-1.5 text-xs font-mono text-gray-400 bg-dark-700/50 border border-gray-700/50
-              rounded-lg hover:border-blue-500/30 hover:text-gray-300 transition-all
-              disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {preset}
-          </button>
-        ))}
+      {/* Presets */}
+      <div className="mt-6">
+        <p className="font-mono text-[10px] text-txt-muted tracking-[0.18em] uppercase mb-3">
+          Or try one of these
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              onClick={() => handlePreset(preset)}
+              disabled={isLoading}
+              className="group/preset flex items-center gap-2 px-4 py-3 border border-border-faint
+                bg-transparent text-txt-secondary font-mono text-xs
+                hover:border-border-accent hover:bg-bg-elevated
+                transition-all duration-200
+                disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <span>{preset.label}</span>
+              <span className="text-txt-muted group-hover/preset:text-accent-primary group-hover/preset:translate-x-1 transition-all duration-200">
+                {"\u2197"}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
