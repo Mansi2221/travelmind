@@ -1,17 +1,4 @@
-import { getTravelAgent } from "@/lib/agent";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractText(content: any): string {
-  if (typeof content === "string") return content;
-  if (Array.isArray(content)) {
-    return content
-      .filter((c) => c && c.type === "text")
-      .map((c) => c.text || "")
-      .join("");
-  }
-  return "";
-}
+import { runAgent, AgentEvent } from "@/lib/agent";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -30,85 +17,14 @@ export async function POST(req: Request) {
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
-        const send = (data: Record<string, unknown>) => {
+        const send = (data: AgentEvent) => {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(data)}\n\n`)
           );
         };
 
-        try {
-          let finalContent = "";
-
-          const agent = getTravelAgent();
-          const eventStream = agent.streamEvents(
-            { messages: [new HumanMessage(query)] },
-            { version: "v2" }
-          );
-
-          for await (const event of eventStream) {
-            const { event: eventType, name, data } = event;
-
-            if (eventType === "on_tool_start") {
-              send({
-                type: "tool_start",
-                tool: name,
-                input: JSON.stringify(data.input || {}),
-              });
-            }
-
-            if (eventType === "on_tool_end") {
-              send({ type: "tool_end", tool: name });
-            }
-
-            if (eventType === "on_chat_model_stream") {
-              const chunk = data.chunk;
-              if (chunk && chunk.content) {
-                const content = extractText(chunk.content);
-                if (content) {
-                  send({ type: "token", content });
-                  finalContent += content;
-                }
-              }
-            }
-
-            if (eventType === "on_chat_model_end") {
-              const output = data.output;
-              if (output instanceof AIMessage) {
-                const text = extractText(output.content);
-                if (text) {
-                  finalContent = text;
-                }
-              }
-            }
-          }
-
-          // Try to parse the final content as JSON report
-          if (finalContent) {
-            try {
-              // Clean up potential markdown fences
-              let cleaned = finalContent.trim();
-              if (cleaned.startsWith("```")) {
-                cleaned = cleaned
-                  .replace(/^```(?:json)?\n?/, "")
-                  .replace(/\n?```$/, "");
-              }
-              const report = JSON.parse(cleaned);
-              send({ type: "report", data: report });
-            } catch {
-              // Not valid JSON, send as final token
-              send({ type: "token", content: "\n\n[Report parsing complete]" });
-            }
-          }
-
-          send({ type: "done" });
-        } catch (error) {
-          const message =
-            error instanceof Error ? error.message : "Agent execution failed";
-          send({ type: "error", message });
-          send({ type: "done" });
-        } finally {
-          controller.close();
-        }
+        await runAgent(query, send);
+        controller.close();
       },
     });
 
